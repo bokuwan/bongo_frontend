@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'palette.dart';
 
 void main() {
@@ -43,14 +42,14 @@ class LoginPage extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Error'),
-            content: Text('Invalid username or password.'),
+            title: const Text('Error'),
+            content: const Text('Invalid username or password.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );
@@ -63,34 +62,34 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Username',
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             TextField(
               controller: _passwordController,
               obscureText: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Password',
               ),
             ),
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
                 _login(context);
               },
-              child: Text('Login'),
+              child: const Text('Login'),
             ),
           ],
         ),
@@ -130,10 +129,10 @@ class _MenuDisplayPageState extends State<MenuDisplayPage> with SingleTickerProv
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('bongo'),
+        title: const Text('bongo'),
         actions: [
           IconButton(
-            icon: Icon(Icons.shopping_cart),
+            icon: const Icon(Icons.shopping_cart),
             onPressed: () {
               // Navigate to the order page
               Navigator.push(
@@ -143,7 +142,7 @@ class _MenuDisplayPageState extends State<MenuDisplayPage> with SingleTickerProv
             },
           ),
           IconButton(
-              icon: Icon(Icons.logout),
+              icon: const Icon(Icons.logout),
               onPressed: (){
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
               }
@@ -154,7 +153,7 @@ class _MenuDisplayPageState extends State<MenuDisplayPage> with SingleTickerProv
         controller: _tabController,
         children: [
           MenuCategory(
-            items: [
+            items: const [
               'Burger', 'Pizza', 'Salad', 'Pasta', 'Sandwich', 'Steak', 'Sushi', 'Taco', 'Ramen', 'Chicken Wings',
               'Caesar Salad', 'Hot Dog', 'Fried Rice', 'Wrap', 'Nachos', 'Hamburger', 'Club Sandwich', 'Lasagna',
               'Calzone', 'Fish and Chips',
@@ -162,7 +161,7 @@ class _MenuDisplayPageState extends State<MenuDisplayPage> with SingleTickerProv
             onItemTap: _addOrder,
           ),
       MenuCategory(
-        items: [
+        items: const [
           'Soda', 'Coffee', 'Tea', 'Mojito', 'Lemonade', 'Smoothie', 'Milkshake', 'Beer', 'Wine', 'Cocktail',
           'Iced Coffee', 'Orange Juice', 'Iced Tea', 'Cola', 'Water', 'Margarita', 'Mocktail', 'Juice',
           'Limeade', 'Hot Chocolate',
@@ -170,7 +169,7 @@ class _MenuDisplayPageState extends State<MenuDisplayPage> with SingleTickerProv
         onItemTap: _addOrder,
       ),
       MenuCategory(
-        items: [
+        items: const [
           'Cake', 'Ice Cream', 'Brownie', 'Cheesecake', 'Cookie', 'Cupcake', 'Pudding', 'Gelato', 'Tiramisu',
           'Pie', 'Macaron', 'Donut', 'Churros', 'Muffin', 'Waffle', 'Fruit Salad', 'Sorbet', 'Frozen Yogurt',
           'Trifle', 'Custard',
@@ -183,7 +182,7 @@ class _MenuDisplayPageState extends State<MenuDisplayPage> with SingleTickerProv
         color: Theme.of(context).primaryColor,
         child: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(child: Text('Food',style: TextStyle(fontSize: 20),)),
             Tab(child: Text('Drinks',style: TextStyle(fontSize: 20),)),
             Tab(child: Text('Desserts',style: TextStyle(fontSize: 20),)),
@@ -198,7 +197,7 @@ class MenuCategory extends StatefulWidget {
   final List<String> items;
   final Function(String) onItemTap;
 
-  MenuCategory({required this.items, required this.onItemTap});
+  const MenuCategory({required this.items, required this.onItemTap});
 
   @override
   _MenuCategoryState createState() => _MenuCategoryState();
@@ -211,7 +210,7 @@ class _MenuCategoryState extends State<MenuCategory> {
   Widget build(BuildContext context) {
     return GridView.builder(
       itemCount: widget.items.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 8.0,
         mainAxisSpacing: 8.0,
@@ -230,25 +229,25 @@ class _MenuCategoryState extends State<MenuCategory> {
               }
             });
             widget.onItemTap(itemName);
-            Future.delayed(Duration(milliseconds: 150), () {
+            Future.delayed(const Duration(milliseconds: 150), () {
               setState(() {
                 selectedItems.remove(itemName);
               });
             });
           },
           child: AnimatedContainer(
-            duration: Duration(milliseconds: 150),
+            duration: const Duration(milliseconds: 150),
             decoration: BoxDecoration(
               color: isSelected ? Colors.green.withOpacity(0.5) : null,
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(8.0),
             ),
-            padding: EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
             alignment: Alignment.center,
             child: Text(
               itemName,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             ),
           ),
         );
@@ -261,7 +260,7 @@ class _MenuCategoryState extends State<MenuCategory> {
 class OrderPage extends StatefulWidget {
   final List<String> orders;
 
-  OrderPage({required this.orders});
+  const OrderPage({required this.orders});
 
   @override
   _OrderPageState createState() => _OrderPageState();
@@ -305,7 +304,7 @@ class _OrderPageState extends State<OrderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Orders'),
+        title: const Text('Orders'),
       ),
       body: Column(
         children: [
@@ -319,16 +318,16 @@ class _OrderPageState extends State<OrderPage> {
                 return ExpansionTile(
                   title: Text(
                     category,
-                    style: TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20),
                   ),
                   children: items.map((item) {
                     return ListTile(
                       title: Text(
                         item,
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
                       trailing: IconButton(
-                        icon: Icon(Icons.delete),
+                        icon: const Icon(Icons.delete),
                         onPressed: () {
                           _removeItem(item);
                         },
@@ -340,20 +339,20 @@ class _OrderPageState extends State<OrderPage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
                 showDialog(context: context, builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Done'),
-                    content: Text('The Order has been saved.'),
+                    title: const Text('Done'),
+                    content: const Text('The Order has been saved.'),
                     actions: [
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text('OK'),
+                        child: const Text('OK'),
                       ),
                     ],
                   );
@@ -366,7 +365,7 @@ class _OrderPageState extends State<OrderPage> {
                 widget.orders.removeWhere((element) => toRemove.contains(element));
                 },
 
-              child: Text('Send Order'),
+              child: const Text('Send Order'),
             ),
           ),
         ],
