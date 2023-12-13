@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'palette.dart';
 
 void main() {
@@ -34,7 +35,7 @@ class LoginPage extends StatelessWidget {
       // Navigate to MenuDisplayPage if login is successful
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MenuDisplayPage()),
+       MaterialPageRoute(builder: (context) => MenuDisplayPage()),
       );
     } else {
       // Show an error dialog or message for unsuccessful login
@@ -140,6 +141,12 @@ class _MenuDisplayPageState extends State<MenuDisplayPage> with SingleTickerProv
                 MaterialPageRoute(builder: (context) => OrderPage(orders: orders)),
               );
             },
+          ),
+          IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: (){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
+              }
           ),
         ],
       ),
@@ -284,9 +291,6 @@ class _OrderPageState extends State<OrderPage> {
   }
 
   String getCategory(String order) {
-    // Implement a function to extract category from the order (e.g., first word before space)
-    // For example, if your order format is "Category: Item", split the string and get the category.
-    // Here, for simplicity, considering the order is the category itself.
     return order;
   }
 
@@ -303,30 +307,73 @@ class _OrderPageState extends State<OrderPage> {
       appBar: AppBar(
         title: Text('Orders'),
       ),
-      body: ListView.builder(
-        itemCount: categorizedOrders.keys.length,
-        itemBuilder: (context, index) {
-          var category = categorizedOrders.keys.elementAt(index);
-          var items = categorizedOrders[category]!;
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: categorizedOrders.keys.length,
+              itemBuilder: (context, index) {
+                var category = categorizedOrders.keys.elementAt(index);
+                var items = categorizedOrders[category]!;
 
-          return ExpansionTile(
-            title: Text(category, style: TextStyle(fontSize: 20),),
-            children: items.map((item) {
-              return ListTile(
-                title: Text(item, style: TextStyle(fontSize: 20),),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    _removeItem(item);
-                  },
-                ),
-              );
-            }).toList(),
-          );
-        },
+                return ExpansionTile(
+                  title: Text(
+                    category,
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  children: items.map((item) {
+                    return ListTile(
+                      title: Text(
+                        item,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          _removeItem(item);
+                        },
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                showDialog(context: context, builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Done'),
+                    content: Text('The Order has been saved.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('OK'),
+                      ),
+                    ],
+                  );
+                },
+                );
+                var toRemove = [];
+                categorizedOrders.keys.forEach((element) {
+                  toRemove.add(element);
+                });
+                widget.orders.removeWhere((element) => toRemove.contains(element));
+                },
+
+              child: Text('Send Order'),
+            ),
+          ),
+        ],
       ),
     );
   }
+
 }
 
 
