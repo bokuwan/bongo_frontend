@@ -25,19 +25,15 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
 
   void _login(BuildContext context) {
-    // Add your authentication logic here, for simplicity using hardcoded values
     String username = _usernameController.text;
     String password = _passwordController.text;
 
-    // Example authentication with hardcoded credentials
     if (username == 'bongo' && password == 'htl') {
-      // Navigate to MenuDisplayPage if login is successful
       Navigator.pushReplacement(
         context,
-       MaterialPageRoute(builder: (context) => MenuDisplayPage()),
+       MaterialPageRoute(builder: (context) => TableSelectPage()),
       );
     } else {
-      // Show an error dialog or message for unsuccessful login
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -98,12 +94,60 @@ class LoginPage extends StatelessWidget {
   }
 }
 
+class TableSelectPage extends StatelessWidget {
+  final List<int> tables = List.generate(20, (index) => index + 1);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Tables'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: ListView.builder(
+          itemCount: tables.length,
+          itemBuilder: (context, index) {
+            int tableNumber = tables[index];
+            return ListTile(
+              title: Text('Table $tableNumber'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MenuDisplayPage(selectedTable: tableNumber),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
 class MenuDisplayPage extends StatefulWidget {
+  final int selectedTable;
+
+  const MenuDisplayPage({required this.selectedTable});
+
   @override
   _MenuDisplayPageState createState() => _MenuDisplayPageState();
 }
 
-class _MenuDisplayPageState extends State<MenuDisplayPage> with SingleTickerProviderStateMixin {
+class _MenuDisplayPageState extends State<MenuDisplayPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   List<String> orders = [];
 
@@ -129,23 +173,29 @@ class _MenuDisplayPageState extends State<MenuDisplayPage> with SingleTickerProv
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('bongo'),
+        title: Text('bongo | Table ${widget.selectedTable.toString()}'),
+
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart),
             onPressed: () {
-              // Navigate to the order page
+              // Navigate to the order page while passing orders and selectedTable
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => OrderPage(orders: orders)),
+                MaterialPageRoute(
+                  builder: (context) => OrderPage(orders: orders, selectedTable: widget.selectedTable),
+                ),
               );
             },
           ),
           IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: (){
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
-              }
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
           ),
         ],
       ),
@@ -171,7 +221,7 @@ class _MenuDisplayPageState extends State<MenuDisplayPage> with SingleTickerProv
       MenuCategory(
         items: const [
           'Cake', 'Ice Cream', 'Brownie', 'Cheesecake', 'Cookie', 'Cupcake', 'Pudding', 'Gelato', 'Tiramisu',
-          'Pie', 'Macaron', 'Donut', 'Churros', 'Muffin', 'Waffle', 'Fruit Salad', 'Sorbet', 'Frozen Yogurt',
+          'Pie', 'Macaroon', 'Donut', 'Churros', 'Muffin', 'Waffle', 'Fruit Salad', 'Sorbet', 'Frozen Yogurt',
           'Trifle', 'Custard',
         ],
         onItemTap: _addOrder,
@@ -238,7 +288,7 @@ class _MenuCategoryState extends State<MenuCategory> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             decoration: BoxDecoration(
-              color: isSelected ? Colors.green.withOpacity(0.5) : null,
+              color: isSelected ? Colors.orange.withOpacity(0.5) : null,
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(8.0),
             ),
@@ -259,8 +309,8 @@ class _MenuCategoryState extends State<MenuCategory> {
 
 class OrderPage extends StatefulWidget {
   final List<String> orders;
-
-  const OrderPage({required this.orders});
+  final int selectedTable;
+  const OrderPage({required this.orders, required this.selectedTable});
 
   @override
   _OrderPageState createState() => _OrderPageState();
@@ -285,11 +335,17 @@ class _OrderPageState extends State<OrderPage> {
       }
       categorizedOrders[category]!.add(order);
     }
-
     setState(() {});
   }
 
   String getCategory(String order) {
+
+    //
+    //TODO
+    // Hier noch unbedingt die Kategorie eines Produktes rausfiltern und ausgeben
+    //
+    //
+    
     return order;
   }
 
@@ -342,29 +398,35 @@ class _OrderPageState extends State<OrderPage> {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
-                showDialog(context: context, builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Done'),
-                    content: const Text('The Order has been saved.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  );
-                },
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => TableSelectPage()),
+                      (Route<dynamic> route) => false,
                 );
-                var toRemove = [];
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Done'),
+                      content: Text(
+                        'The Order has been saved.\nTable Number: ${widget.selectedTable.toString()}',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+                var toRemove = <String>[];
                 categorizedOrders.keys.forEach((element) {
                   toRemove.add(element);
                 });
                 widget.orders.removeWhere((element) => toRemove.contains(element));
-                },
-
+              },
               child: const Text('Send Order'),
             ),
           ),
@@ -372,7 +434,6 @@ class _OrderPageState extends State<OrderPage> {
       ),
     );
   }
-
 }
 
 
